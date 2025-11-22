@@ -41,5 +41,15 @@
         </div>
     </div>
 
+    <script>
+        // If this page is loaded inside an iframe/modal, remove outer body padding
+        (function(){
+            try{
+                if(window.self !== window.top){
+                    document.body.classList.add('embedded');
+                }
+            }catch(e){/* ignore cross-origin */}
+        })();
+    </script>
 </body>
 </html>

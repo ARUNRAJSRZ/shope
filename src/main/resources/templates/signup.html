@@ -13,7 +13,7 @@
         <a class="logo" th:href="@{/home}" href="/home">SRZ</a>
         <div>
           <h2>Create account</h2>
-          <p class="muted">Register as a normal user</p>
+          <p class="muted">Register as user</p>
         </div>
       </div>
 
@@ -44,5 +44,15 @@
       </form>
     </div>
   </div>
-</body>
-</html>
+      <script>
+        // When embedded inside an iframe/modal, reduce outer page padding so auth card fits
+        (function(){
+          try{
+            if(window.self !== window.top){
+              document.body.classList.add('embedded');
+            }
+          }catch(e){/* ignore cross-origin */}
+        })();
+      </script>
+    </body>
+    </html>
