@@ -1,18 +1,16 @@
-# Step 1: Build stage (optional if you already have jar)
-FROM maven:3.8.5-openjdk-17 AS build
-WORKDIR /srz-shope
+# Step 1: Build stage (Maven + Java 17)
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /shope
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Step 2: Run stage
-FROM openjdk:17-jdk-slim
-WORKDIR /srz-shope
+# Step 2: Run stage (Java 17)
+FROM eclipse-temurin:17-jdk
+WORKDIR /shope
 
-# Copy JAR from build stage
-COPY --from=build /shope/target/*.jar srz-shope.jar
+# Copy your JAR (correct path & name)
+COPY --from=build /shope/target/srz-shope.jar srz-shope.jar
 
-# Expose port
 EXPOSE 8080
 
-# Start the application
 ENTRYPOINT ["java", "-jar", "srz-shope.jar"]
