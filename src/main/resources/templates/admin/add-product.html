@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Add Product — Shope</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <a class="logo" th:href="@{/home}" href="/home">SRZ</a>
+        <div>
+          <h1 th:text="${product.id} != null ? 'Edit product' : 'Add product'">Add product</h1>
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <div th:if="${username != null}" style="display:flex;gap:8px;align-items:center">
+          <span>Hi, <strong th:text="${username}">User</strong></span>
+        </div>
+        <a class="btn" th:href="@{/admin}" href="/admin">Back</a>
+  <a th:if="${username != null}" th:href="@{/logout}" class="btn logout" aria-label="Logout">Logout</a>
+      </div>
+    </header>
+
+    <main>
+      <!-- reuse this form for both add and edit; action will change when editing -->
+      <form th:action="${product.id} != null ? @{/admin/products/{id}(id=${product.id})} : @{/admin/products}"
+            th:object="${product}"
+            method="post" enctype="multipart/form-data" class="auth-card">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div style="display:flex;flex-direction:column;gap:12px;max-width:720px">
+          <label>Code
+            <input type="text" th:field="*{code}" placeholder="sku or code" />
+          </label>
+
+          <label>
+            <span th:text="${product.id} != null ? 'Edit product' : 'Name'" style="display:none"></span>
+          </label>
+
+          <label>Name
+            <input type="text" th:field="*{name}" placeholder="Product name" required />
+          </label>
+
+          <label>Category
+            <input type="text" th:field="*{category}" placeholder="Category" />
+          </label>
+
+          <label>Price
+            <input type="number" th:field="*{price}" placeholder="Price in INR" />
+          </label>
+
+          <label>Affiliate URL
+            <input type="url" th:field="*{affiliate}" placeholder="https://..." />
+          </label>
+
+          <label>Description
+            <textarea th:field="*{description}" rows="4" placeholder="Short description"></textarea>
+          </label>
+
+          <label>Offer
+            <input type="checkbox" th:field="*{offer}" />
+          </label>
+
+          <label>Image file
+            <input type="file" name="imageFile" accept="image/*" />
+          </label>
+
+          <div style="display:flex;gap:12px;justify-content:flex-end">
+            <button type="submit" class="btn primary" th:text="${product.id} != null ? 'Update product' : 'Save product'">Save product</button>
+            <a href="/admin" class="btn">Cancel</a>
+          </div>
+        </div>
+      </form>
+    </main>
+  </div>
+  <script>
+    // If this page is loaded in an iframe after login, notify parent to close modal and navigate
+    if (window !== window.top) {
+      try {
+        window.parent.postMessage({ type: 'auth-success', location: window.location.href }, window.location.origin);
+      } catch (e) {
+        try { window.parent.postMessage({ type: 'auth-success', location: window.location.href }, '*'); } catch (err) {}
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Products</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" href="/css/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <a class="logo" th:href="@{/home}" href="/home">SRZ</a>
+        <div>
+          <h1>Admin</h1>
+          <p class="lead">Product management</p>
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+        <div th:if="${username != null}" style="display:flex;gap:8px;align-items:center">
+          <span>Hi, <strong th:text="${username}">User</strong></span>
+          <a th:if="${isAdmin}" class="btn" th:href="@{/admin}">Dashboard</a>
+        </div>
+        <a class="btn" th:href="@{/}" href="/">Public site</a>
+        <a class="btn primary" th:href="@{/admin/products/new}" href="/admin/products/new">Add product</a>
+  <a th:if="${username != null}" th:href="@{/logout}" class="btn logout" aria-label="Logout">Logout</a>
+      </div>
+    </header>
+
+    <main>
+      <section style="margin-top:18px">
+        <table class="admin-table" style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid #e6eef0">
+              <th style="padding:10px">#</th>
+              <th style="padding:10px">Image</th>
+              <th style="padding:10px">Name</th>
+              <th style="padding:10px">Category</th>
+              <th style="padding:10px">Price</th>
+              <th style="padding:10px">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p,iter : ${products}" style="border-bottom:1px solid #f0f0f0">
+              <td style="padding:10px" th:text="${iter.index + 1}">1</td>
+              <td style="padding:10px;width:120px">
+                <img th:src="@{/api/products/{id}/image(id=${p.id})}" alt="" style="height:60px;object-fit:cover;border-radius:6px" onerror="this.src='/images/logo.PNG'"/>
+              </td>
+              <td style="padding:10px" th:text="${p.name}">Product name</td>
+              <td style="padding:10px" th:text="${p.category}">Category</td>
+              <td style="padding:10px">₹<span th:text="${p.price}">0</span></td>
+              <td style="padding:10px">
+                <a th:href="@{/admin/products/edit/{id}(id=${p.id})}" href="#" class="btn">Edit</a>
+                <form th:action="@{/admin/products/{id}/delete(id=${p.id})}" method="post" th:object="${p}" style="display:inline">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                  <button type="submit" class="btn" style="background:#fee; color:#b91c1c">Delete</button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+  <script>
+    // If this admin page is loaded inside an iframe (post-login redirect), notify the parent window
+    if (window !== window.top) {
+      try {
+        window.parent.postMessage({ type: 'auth-success', location: window.location.href }, window.location.origin);
+      } catch (e) {
+        // fallback: allow any origin (parent will verify)
+        try { window.parent.postMessage({ type: 'auth-success', location: window.location.href }, '*'); } catch (err) {}
+      }
+    }
+  </script>
+</body>
+</html>
