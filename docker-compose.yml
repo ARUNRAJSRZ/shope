@@ -22,7 +22,7 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/MyShop
+      SPRING_DATASOURCE_URL: jdbc:postgresql://dpg-xxxx.internal:5432/MyShop?sslmode=require
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: admin
     restart: always
