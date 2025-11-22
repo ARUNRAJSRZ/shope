@@ -5,9 +5,9 @@ services:
     image: postgres:15
     container_name: postgres_container
     environment:
-      POSTGRES_DB: MyShop
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: myshop_90iq
+      POSTGRES_USER: pgadmin
+      POSTGRES_PASSWORD: Jjw0H30KSJVn44rhm52s6sE5YYkF2cqS
     ports:
       - "5432:5432"
     volumes:
@@ -22,9 +22,9 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://dpg-xxxx.internal:5432/MyShop?sslmode=require
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_URL: postgresql://pgadmin:Jjw0H30KSJVn44rhm52s6sE5YYkF2cqS@dpg-d4gudlvdiees73b6p1og-a/myshop_90iq
+      SPRING_DATASOURCE_USERNAME: pgadmin
+      SPRING_DATASOURCE_PASSWORD: Jjw0H30KSJVn44rhm52s6sE5YYkF2cqS
     restart: always
 
 volumes:
