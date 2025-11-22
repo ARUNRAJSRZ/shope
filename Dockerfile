@@ -9,7 +9,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /srz-shope
 
 # Copy JAR from build stage
-COPY --from=build /app/target/*.jar srz-shope.jar
+COPY --from=build /shope/target/*.jar srz-shope.jar
 
 # Expose port
 EXPOSE 8080
