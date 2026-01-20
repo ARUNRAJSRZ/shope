@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Orders</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h1>Your Orders</h1>
+  <div id="orders-list">
+    <!-- Orders will be listed here -->
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Items</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Orders rendered dynamically -->
+        <tr th:each="order : ${orders}">
+          <td th:text="${order.id}"></td>
+          <td th:text="${order.items}"></td>
+          <td th:text="${order.status}"></td>
+          <td th:text="${#dates.format(order.date, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
