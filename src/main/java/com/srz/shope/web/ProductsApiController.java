@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import com.srz.shope.web.dto.ProductDto;
 
 @RestController
 @RequestMapping("/api")
@@ -19,7 +21,11 @@ public class ProductsApiController {
     }
 
     @GetMapping("/products")
-    public List<Product> list() {
-        return repository.findAll();
+    public List<ProductDto> list() {
+        return repository.findAll().stream().map(p -> new ProductDto(
+                p.getId(), p.getCode(), p.getName(), p.getCategory(), p.getPrice(),
+                (p.getId() != null ? ("/api/products/" + p.getId() + "/image") : null),
+                p.getDescription(), p.getAffiliate(), p.getOffer()
+        )).collect(Collectors.toList());
     }
 }

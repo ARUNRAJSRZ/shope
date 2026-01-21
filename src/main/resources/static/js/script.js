@@ -24,9 +24,8 @@ function populateCategories(){
 
 function render(list){
   grid.innerHTML = '';
-  if(!list.length){ emptyEl.style.display='block'; countBadge.textContent='0 items'; renderPagination(0); return; }
+  if(!list.length){ emptyEl.style.display='block'; renderPagination(0); return; }
   emptyEl.style.display='none';
-  countBadge.textContent=list.length + (list.length===1?' item':' items');
 
   const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
   if(currentPage > totalPages) currentPage = 1;
@@ -41,9 +40,11 @@ function render(list){
       <div class="meta"><div><div class="title">${p.name}</div><div class="cat">${p.category}</div></div><div class="price">₹${p.price}</div></div>
       <div class="desc">${p.description}</div>
       <div class="actions">
-        <a class="buy" target="_blank" rel="noopener noreferrer" href="${p.affiliate}">Buy on Amazon</a>
-        <a class="details" href="#" data-id="${p.id}">Details</a>
+        <button class="add-to-cart" data-id="${p.id}">Added to Cart</button>
+        <button class="buy-now" data-id="${p.id}">Buy Now</button>
       </div>`;
+    // attach product id to the card element so clicks on the card open the modal
+    card.dataset.id = p.id;
     grid.appendChild(card);
   });
 
@@ -75,15 +76,41 @@ function getFiltered(){
 clearBtn.addEventListener('click',()=>{qInput.value=''; currentPage = 1; qInput.dispatchEvent(new Event('input'));});
 resetBtn.addEventListener('click',()=>{qInput.value=''; categorySel.value='all'; sortSel.value='relevance'; currentPage = 1; render(getFiltered());});
 
-grid.addEventListener('click', ev => {
-  const a = ev.target.closest('a.details');
-  if(!a) return;
-  ev.preventDefault();
-  
-  const id = Number(a.dataset.id);
-  const p = products.find(x => x.id === id);
-  if(p) showProductModal(p);
-});
+  grid.addEventListener('click', ev => {
+    if(ev.target.classList.contains('add-to-cart')) {
+      const id = Number(ev.target.getAttribute('data-id'));
+      const product = products.find(p => p.id === id);
+      if (product && window.addToCart) {
+        window.addToCart(product);
+       // alert('Added to cart!');
+      }
+      return;
+    }
+    if(ev.target.classList.contains('buy-now')) {
+      const id = Number(ev.target.getAttribute('data-id'));
+      const product = products.find(p => p.id === id);
+        if (product && product.affiliate) {
+          window.location.href = product.affiliate;
+        } else if (product) {
+          if (typeof buyNow === 'function') {
+            buyNow(product);
+          } else {
+            // fallback
+            window.location.href = '/cart';
+          }
+        }
+      return;
+    }
+
+    const card = ev.target.closest('article.card');
+    if (!card) return;
+    // ignore clicks on the action buttons area
+    if (ev.target.closest('.actions')) return;
+
+    const id = Number(card.dataset.id);
+    const p = products.find(x => x.id === id);
+    if(p) showProductModal(p);
+  });
 
 function showProductModal(product) {
   const modal = document.getElementById('productModal');
@@ -93,8 +120,22 @@ function showProductModal(product) {
   document.getElementById('modalDesc').textContent = product.description;
   document.getElementById('modalImage').src = product.image;
   document.getElementById('modalImage').alt = product.name;
-  document.getElementById('modalBuy').href = product.affiliate;
-  
+  // wire modal buttons
+  const addBtn = document.getElementById('modalAddToCart');
+  const buyBtn = document.getElementById('modalBuyNow');
+  addBtn.onclick = () => {
+    if (window.addToCart) {
+      window.addToCart(product);
+     // alert('Added to cart!');
+      closeModal();
+    }
+  };
+  buyBtn.onclick = () => {
+    if (product.affiliate) window.location.href = product.affiliate; else {
+      if (typeof buyNow === 'function') buyNow(product); else window.location.href = '/cart';
+    }
+  };
+
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden'; // Prevent background scroll
 }
@@ -105,11 +146,20 @@ function closeModal() {
   document.body.style.overflow = ''; // Restore scroll
 }
 
-// Add modal close handlers
-document.querySelector('.modal-close').addEventListener('click', closeModal);
-document.getElementById('productModal').addEventListener('click', e => {
-  if (e.target.id === 'productModal') closeModal();
+// Add modal close handlers (delegate + null-safe)
+document.addEventListener('click', function (e) {
+  const close = e.target.closest && e.target.closest('.modal-close');
+  if (close) {
+    try { closeModal(); } catch (err) { /* ignore */ }
+  }
 });
+
+const productModalEl = document.getElementById('productModal');
+if (productModalEl) {
+  productModalEl.addEventListener('click', function (e) {
+    if (e.target === productModalEl) closeModal();
+  });
+}
 
 // Add keyboard handler for accessibility
 document.addEventListener('keydown', e => {
@@ -151,3 +201,50 @@ function renderPagination(totalPages){
 
   paginationEl.appendChild(fragment);
 }
+
+// Buy Now: replace current cart with this product and navigate to cart
+function buyNow(product) {
+  const csrfMeta = document.querySelector('meta[name="_csrf"]');
+  const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+  const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+  if (csrfMeta && csrfHeaderMeta) {
+    headers[csrfHeaderMeta.getAttribute('content')] = csrfMeta.getAttribute('content');
+  }
+  fetch('/api/cart/buynow?productId=' + product.id + '&quantity=1', { method: 'POST', headers: headers })
+    .then(resp => {
+      if (!resp.ok) throw new Error('Buy now failed');
+      return resp.json();
+    })
+    .then(() => { window.location.href = '/cart'; })
+    .catch(() => {
+      if (product.affiliate) window.location.href = product.affiliate; else alert('You must be logged in to buy now.');
+    });
+}
+
+// Update cart badge by fetching current cart from server and summing quantities.
+function updateCartBadge(){
+  if(!countBadge) return;
+  // make badge appear clickable
+  countBadge.style.cursor = 'pointer';
+  countBadge.addEventListener('click', ()=>{ window.location.href = '/cart'; });
+
+  fetch('/api/cart', { method: 'GET', credentials: 'same-origin' })
+    .then(resp => {
+      if (!resp.ok) {
+        // unauthenticated or error -> show zero
+        countBadge.textContent = '0 items';
+        return null;
+      }
+      return resp.json();
+    })
+    .then(data => {
+      if (!data) return;
+      // data is an array of CartDto: { id, productId, productName, unitPrice, quantity, image }
+      const total = data.reduce((s, item) => s + (item.quantity || 0), 0);
+      countBadge.textContent = total + (total === 1 ? ' item' : ' items');
+    })
+    .catch(() => { countBadge.textContent = '0 items'; });
+}
+
+// initialize badge on page load
+updateCartBadge();

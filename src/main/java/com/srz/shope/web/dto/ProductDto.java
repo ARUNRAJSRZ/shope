@@ -1,34 +1,20 @@
-package com.srz.shope.model;
+package com.srz.shope.web.dto;
 
-import jakarta.persistence.Entity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-@Entity
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProductDto {
     private Long id;
     private String code;
     private String name;
     private String category;
     private Integer price;
     private String image;
-    @jakarta.persistence.Lob
-    @JsonIgnore
-    private byte[] imageData;
-    private String imageContentType;
     private String description;
     private String affiliate;
-    private Boolean offer = false;
-    private Integer quantity;
+    private Boolean offer;
 
-    public Product() {}
+    public ProductDto() {}
 
-    public Product(String code, String name, String category, Integer price, String image, String description, String affiliate, Boolean offer) {
+    public ProductDto(Long id, String code, String name, String category, Integer price, String image, String description, String affiliate, Boolean offer) {
+        this.id = id;
         this.code = code;
         this.name = name;
         this.category = category;
@@ -39,7 +25,6 @@ public class Product {
         this.offer = offer;
     }
 
-    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getCode() { return code; }
@@ -52,16 +37,10 @@ public class Product {
     public void setPrice(Integer price) { this.price = price; }
     public String getImage() { return image; }
     public void setImage(String image) { this.image = image; }
-    public byte[] getImageData() { return imageData; }
-    public void setImageData(byte[] imageData) { this.imageData = imageData; }
-    public String getImageContentType() { return imageContentType; }
-    public void setImageContentType(String imageContentType) { this.imageContentType = imageContentType; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public String getAffiliate() { return affiliate; }
     public void setAffiliate(String affiliate) { this.affiliate = affiliate; }
     public Boolean getOffer() { return offer; }
     public void setOffer(Boolean offer) { this.offer = offer; }
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 }

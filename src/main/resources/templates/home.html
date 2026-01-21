@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
   <title>SRZ Finds — Product List</title>
   <meta name="description" content="SRZ Finds — curated affordable gadgets. Search, filter and buy." />
   <link rel="icon" type="image/png" href="images/favicon.png">
@@ -90,8 +92,8 @@
             <p id="modalCategory"></p>
             <p id="modalPrice"></p>
             <p id="modalDesc"></p>
-            <a id="modalBuy" class="btn primary" target="_blank" rel="noopener">Buy on Amazon</a>
-            <small class="price-disclaimer">* Prices on Amazon may vary</small>
+            <button id="modalAddToCart" class="btn secondary">Added to Cart</button>
+            <button id="modalBuyNow" class="btn primary">Buy Now</button>
           </div>
         </div>
       </div>
@@ -149,6 +151,7 @@
 
   <!-- load product data first, then main script -->
   <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
   <script src="js/script.js"></script>
   <script>
     (function(){

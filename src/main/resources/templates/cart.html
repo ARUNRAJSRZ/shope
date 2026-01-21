@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  <title>Cart</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <h1>Your Cart</h1>
+  <div style="display:flex;gap:1rem;margin-top:1em">
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <a href="/home" class="btn">← Back to Home</a>
+        <div>
+          <a href="/address" class="btn primary">Proceed to Payment</a>
+        </div>
+      </div>
+      <div id="cart-items" style="margin-top:1em"></div>
+    </div>
+
+    <aside style="width:360px;border-left:1px solid #eee;padding-left:1rem">
+      <h3>Shipping Addresses</h3>
+      <div id="addresses-list">Loading addresses…</div>
+      <div style="margin-top:0.5rem">
+        <button id="add-address-btn" class="btn">Add New Address</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Add Address Modal -->
+  <div id="address-modal" class="modal" style="display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
+    <div class="modal-content" style="background:#fff;padding:1rem;width:480px;border-radius:6px;">
+      <h3>Add Shipping Address</h3>
+      <form id="address-form">
+        <div><label>Name</label><input name="name" required style="width:100%"></div>
+        <div><label>Address Line 1</label><input name="addressLine1" required style="width:100%"></div>
+        <div><label>Address Line 2</label><input name="addressLine2" style="width:100%"></div>
+        <div style="display:flex;gap:8px"><div style="flex:1"><label>City</label><input name="city" style="width:100%"></div><div style="flex:1"><label>State</label><input name="state" style="width:100%"></div></div>
+        <div style="display:flex;gap:8px;margin-top:4px"><div style="flex:1"><label>Postal</label><input name="postalCode" style="width:100%"></div><div style="flex:1"><label>Country</label><input name="country" style="width:100%"></div></div>
+        <div><label>Phone</label><input name="phoneNumber" style="width:100%"></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+          <button type="button" id="address-cancel" class="btn">Cancel</button>
+          <button type="submit" class="btn primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Product Details Modal (reuse modal from home) -->
+  <div id="productModal" class="modal" role="dialog" aria-labelledby="modalTitle" style="display:none">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close">&times;</button>
+      <h2 id="modalTitle"></h2>
+      <div class="modal-body">
+        <div class="modal-img">
+          <img id="modalImage" alt="">
+        </div>
+        <div class="modal-info">
+          <p id="modalCategory"></p>
+          <p id="modalPrice"></p>
+          <p id="modalDesc"></p>
+          <button id="modalAddToCart" class="btn secondary">Added to Cart</button>
+          <button id="modalBuyNow" class="btn primary">Buy Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/products.js"></script>
+  <script src="/js/cart.js"></script>
+  <script src="/js/script.js"></script>
+</body>
+</html>

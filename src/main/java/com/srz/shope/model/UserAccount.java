@@ -40,6 +40,10 @@ public class UserAccount {
     @Column(nullable = false)
     private Instant createdAt = Instant.now();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "default_shipping_address_id")
+    private ShippingAdress defaultShippingAddress;
+
     public UserAccount() {}
 
     // getters and setters
@@ -66,4 +70,6 @@ public class UserAccount {
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public ShippingAdress getDefaultShippingAddress() { return defaultShippingAddress; }
+    public void setDefaultShippingAddress(ShippingAdress defaultShippingAddress) { this.defaultShippingAddress = defaultShippingAddress; }
 }

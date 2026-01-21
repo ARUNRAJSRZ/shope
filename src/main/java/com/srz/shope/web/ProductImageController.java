@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,23 +26,24 @@ public class ProductImageController {
         this.repository = repository;
     }
 
-    @GetMapping("/{id}/image")
-    public ResponseEntity<byte[]> image(@PathVariable Long id) {
-        Optional<Product> p = repository.findById(id);
-        if (p.isEmpty() || p.get().getImageData() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        Product prod = p.get();
-        byte[] data = prod.getImageData();
-        String contentType = prod.getImageContentType();
-        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
-        try {
-            if (contentType != null) mediaType = MediaType.parseMediaType(contentType);
-        } catch (Exception ignored) {}
+        @GetMapping("/{id}/image")
+        @Transactional(readOnly = true)
+        public ResponseEntity<byte[]> image(@PathVariable Long id) {
+            Optional<Product> p = repository.findById(id);
+            if (p.isEmpty() || p.get().getImageData() == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            Product prod = p.get();
+            byte[] data = prod.getImageData();
+            String contentType = prod.getImageContentType();
+            MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+            try {
+                if (contentType != null) mediaType = MediaType.parseMediaType(contentType);
+            } catch (Exception ignored) {}
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(mediaType);
-        headers.setCacheControl(CacheControl.maxAge(7, TimeUnit.DAYS).cachePublic());
-        return new ResponseEntity<>(data, headers, HttpStatus.OK);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(mediaType);
+            headers.setCacheControl(CacheControl.maxAge(7, TimeUnit.DAYS).cachePublic());
+            return new ResponseEntity<>(data, headers, HttpStatus.OK);
     }
 }
