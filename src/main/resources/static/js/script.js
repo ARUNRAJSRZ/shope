@@ -24,9 +24,8 @@ function populateCategories(){
 
 function render(list){
   grid.innerHTML = '';
-  if(!list.length){ emptyEl.style.display='block'; countBadge.textContent='0 items'; renderPagination(0); return; }
+  if(!list.length){ emptyEl.style.display='block'; renderPagination(0); return; }
   emptyEl.style.display='none';
-  countBadge.textContent=list.length + (list.length===1?' item':' items');
 
   const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
   if(currentPage > totalPages) currentPage = 1;
@@ -90,11 +89,16 @@ resetBtn.addEventListener('click',()=>{qInput.value=''; categorySel.value='all';
     if(ev.target.classList.contains('buy-now')) {
       const id = Number(ev.target.getAttribute('data-id'));
       const product = products.find(p => p.id === id);
-      if (product && product.affiliate) {
-        window.location.href = product.affiliate;
-      } else {
-        window.location.href = '/payment';
-      }
+        if (product && product.affiliate) {
+          window.location.href = product.affiliate;
+        } else if (product) {
+          if (typeof buyNow === 'function') {
+            buyNow(product);
+          } else {
+            // fallback
+            window.location.href = '/cart';
+          }
+        }
       return;
     }
 
@@ -127,7 +131,9 @@ function showProductModal(product) {
     }
   };
   buyBtn.onclick = () => {
-    if (product.affiliate) window.location.href = product.affiliate; else window.location.href = '/payment';
+    if (product.affiliate) window.location.href = product.affiliate; else {
+      if (typeof buyNow === 'function') buyNow(product); else window.location.href = '/cart';
+    }
   };
 
   modal.style.display = 'flex';
@@ -195,3 +201,50 @@ function renderPagination(totalPages){
 
   paginationEl.appendChild(fragment);
 }
+
+// Buy Now: replace current cart with this product and navigate to cart
+function buyNow(product) {
+  const csrfMeta = document.querySelector('meta[name="_csrf"]');
+  const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+  const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+  if (csrfMeta && csrfHeaderMeta) {
+    headers[csrfHeaderMeta.getAttribute('content')] = csrfMeta.getAttribute('content');
+  }
+  fetch('/api/cart/buynow?productId=' + product.id + '&quantity=1', { method: 'POST', headers: headers })
+    .then(resp => {
+      if (!resp.ok) throw new Error('Buy now failed');
+      return resp.json();
+    })
+    .then(() => { window.location.href = '/cart'; })
+    .catch(() => {
+      if (product.affiliate) window.location.href = product.affiliate; else alert('You must be logged in to buy now.');
+    });
+}
+
+// Update cart badge by fetching current cart from server and summing quantities.
+function updateCartBadge(){
+  if(!countBadge) return;
+  // make badge appear clickable
+  countBadge.style.cursor = 'pointer';
+  countBadge.addEventListener('click', ()=>{ window.location.href = '/cart'; });
+
+  fetch('/api/cart', { method: 'GET', credentials: 'same-origin' })
+    .then(resp => {
+      if (!resp.ok) {
+        // unauthenticated or error -> show zero
+        countBadge.textContent = '0 items';
+        return null;
+      }
+      return resp.json();
+    })
+    .then(data => {
+      if (!data) return;
+      // data is an array of CartDto: { id, productId, productName, unitPrice, quantity, image }
+      const total = data.reduce((s, item) => s + (item.quantity || 0), 0);
+      countBadge.textContent = total + (total === 1 ? ' item' : ' items');
+    })
+    .catch(() => { countBadge.textContent = '0 items'; });
+}
+
+// initialize badge on page load
+updateCartBadge();

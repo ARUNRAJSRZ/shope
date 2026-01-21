@@ -81,6 +81,32 @@ public class CartApiController {
         return new CartDto(saved.getId(), pid, pname, saved.getUnitPrice(), saved.getQuantity(), img);
     }
 
+    @PostMapping("/buynow")
+    public com.srz.shope.web.dto.CartDto buyNow(@RequestParam Long productId, @RequestParam Integer quantity, Principal principal) {
+        if (principal == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        UserAccount user = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        Product product = productRepository.findById(productId).orElseThrow();
+        // Remove existing active cart items for this user
+        List<Cart> existing = cartRepository.findByUserAndIsActiveTrue(user);
+        if (existing != null && !existing.isEmpty()) {
+            cartRepository.deleteAll(existing);
+        }
+        Cart cart = new Cart();
+        cart.setUser(user);
+        cart.setProduct(product);
+        cart.setQuantity(quantity);
+        cart.setUnitPrice(product.getPrice().doubleValue());
+        cart.setStatus("ACTIVE");
+        cart.setIsActive(true);
+        Cart saved = cartRepository.save(cart);
+        Long pid = saved.getProduct() != null ? saved.getProduct().getId() : null;
+        String img = pid != null ? "/api/products/" + pid + "/image" : null;
+        String pname = pid != null ? productRepository.findNameById(pid) : "";
+        return new com.srz.shope.web.dto.CartDto(saved.getId(), pid, pname, saved.getUnitPrice(), saved.getQuantity(), img);
+    }
+
     // @DeleteMapping("/{id}")
     // public void deleteCartItem(@PathVariable Long id, Principal principal) {
     //     if (principal == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
