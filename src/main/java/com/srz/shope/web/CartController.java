@@ -15,8 +15,8 @@ public class CartController {
         return "address";
     }
 
-    @GetMapping("/payment")
-    public String payment() {
-        return "payment";
-    }
+    // @GetMapping("/payment")
+    // public String payment() {
+    //     return "payment";
+    // }
 }

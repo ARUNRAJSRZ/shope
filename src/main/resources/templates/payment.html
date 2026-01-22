@@ -6,11 +6,46 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <h1>Payment</h1>
-  <form action="/order-confirm" method="post">
-    <label for="card">Card Number:</label>
-    <input type="text" id="card" name="card" required>
-    <button type="submit" class="btn primary">Pay Now</button>
-  </form>
+  <div class="auth-card" style="max-width:720px">
+    <h2>Checkout</h2>
+    <p class="lead">Total: ₹<strong th:text="${total}">0</strong></p>
+
+    <form id="paymentForm" method="post">
+      <input type="hidden" name="total" th:value="${total}" />
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+      <div style="display:flex;gap:12px;align-items:center;margin:12px 0">
+        <label style="display:flex;gap:8px;align-items:center"><input type="radio" name="method" value="cod" checked /> Cash on Delivery (COD)</label>
+        <label style="display:flex;gap:8px;align-items:center"><input type="radio" name="method" value="online" /> Pay Online</label>
+      </div>
+
+      <div id="onlineInfo" style="display:none;margin-bottom:12px">
+        <p>Select your payment provider. You will be redirected to complete payment.</p>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button type="button" class="btn" id="codBtn">Place order (COD)</button>
+        <button type="button" class="btn primary" id="onlineBtn">Pay online</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const codBtn = document.getElementById('codBtn');
+    const onlineBtn = document.getElementById('onlineBtn');
+    const total = document.querySelector('input[name="total"]').value;
+
+    codBtn.addEventListener('click', ()=>{
+      const form = document.getElementById('paymentForm');
+      form.action = '/payment/cod';
+      form.submit();
+    });
+
+    onlineBtn.addEventListener('click', ()=>{
+      const form = document.getElementById('paymentForm');
+      form.action = '/payment/online';
+      form.submit();
+    });
+  </script>
 </body>
 </html>
