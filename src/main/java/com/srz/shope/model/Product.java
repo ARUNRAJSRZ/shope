@@ -24,19 +24,36 @@ public class Product {
     private String description;
     private String affiliate;
     private Boolean offer = false;
-    private Integer quantity;
+    private Integer AvailableQuantity;
+    private Double discountPrice;
+    private double averageRating;
+    private Double discountPercentage;
+    private Double averagePurchasePrice;
+    
+
 
     public Product() {}
 
-    public Product(String code, String name, String category, Integer price, String image, String description, String affiliate, Boolean offer) {
+    public Product(Long id, String code, String name, String category, Integer price, String image,
+                   byte[] imageData, String imageContentType, String description, String affiliate,
+                   Boolean offer, Integer availableQuantity, Double discountPrice,
+                   double averageRating, Double discountPercentage, Double averagePurchasePrice) {
+        this.id = id;
         this.code = code;
         this.name = name;
         this.category = category;
         this.price = price;
         this.image = image;
+        this.imageData = imageData;
+        this.imageContentType = imageContentType;
         this.description = description;
         this.affiliate = affiliate;
         this.offer = offer;
+        this.AvailableQuantity = availableQuantity;
+        this.discountPrice = discountPrice;
+        this.averageRating = averageRating;
+        this.discountPercentage = discountPercentage;
+        this.averagePurchasePrice = averagePurchasePrice;
     }
 
     // Getters and setters
@@ -62,6 +79,16 @@ public class Product {
     public void setAffiliate(String affiliate) { this.affiliate = affiliate; }
     public Boolean getOffer() { return offer; }
     public void setOffer(Boolean offer) { this.offer = offer; }
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public Integer getAvailableQuantity() { return AvailableQuantity; }
+    public void setAvailableQuantity(Integer availableQuantity) { AvailableQuantity = availableQuantity; }
+    public Double getDiscountPrice() { return discountPrice; }
+    public void setDiscountPrice(Double discountPrice) { this.discountPrice = discountPrice; }
+    public double getAverageRating() { return averageRating; }
+    public void setAverageRating(double averageRating) { this.averageRating = averageRating; }
+    public Double getDiscountPercentage() { return discountPercentage; }
+    public void setDiscountPercentage(Double discountPercentage) { this.discountPercentage = discountPercentage; }
+    public Double getAveragePurchasePrice() { return averagePurchasePrice; }
+    public void setAveragePurchasePrice(Double averagePurchasePrice) { this.averagePurchasePrice = averagePurchasePrice; } 
+    
+    
 }

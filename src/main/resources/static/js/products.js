@@ -15,6 +15,8 @@ fetch('/api/products')
       name: p.name,
       category: p.category,
       price: p.price,
+      availableQuantity: p.availableQuantity,
+      averageRating: p.averageRating,
       // prefer serving image from API endpoint (will stream blob if stored in DB)
       image: p.id ? `/api/products/${p.id}/image` : (p.image && (p.image.startsWith('/') || p.image.startsWith('http')) ? p.image : (p.image ? `/images/${p.image}` : '')),
       description: p.description,
