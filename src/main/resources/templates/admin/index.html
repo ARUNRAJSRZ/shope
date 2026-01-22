@@ -22,13 +22,27 @@
           <a th:if="${isAdmin}" class="btn" th:href="@{/admin}">Dashboard</a>
         </div>
         <a class="btn" th:href="@{/}" href="/">Public site</a>
-        <a class="btn primary" th:href="@{/admin/products/new}" href="/admin/products/new">Add product</a>
   <a th:if="${username != null}" th:href="@{/logout}" class="btn logout" aria-label="Logout">Logout</a>
       </div>
     </header>
 
-    <main>
-      <section style="margin-top:18px">
+    <div style="display:flex;gap:20px;margin-top:18px;align-items:flex-start">
+      <aside style="width:220px;">
+        <nav style="display:flex;flex-direction:column;gap:10px">
+          <a class="btn" th:href="@{/admin}" href="/admin">Overview</a>
+          <a class="btn" style="background:transparent;text-align:left" th:href="@{/admin}" href="/admin">Products</a>
+          <!-- Moved Add product to left menu -->
+          <a class="btn primary" th:href="@{/admin/products/new}" href="/admin/products/new">Add product</a>
+          <!-- Update stock placeholder -->
+          <a class="btn" th:href="@{/admin/stock}" href="/admin/stock">Update stock</a>
+          <!-- New button added below Update stock -->
+          <a class="btn" th:href="@{/admin/products/import}" href="/admin/products/import">Import CSV</a>
+        </nav>
+      </aside>
+      <main style="flex:1">
+
+      <!-- main content moved into right column -->
+      <section style="margin-top:0">
         <table class="admin-table" style="width:100%;border-collapse:collapse">
           <thead>
             <tr style="text-align:left;border-bottom:1px solid #e6eef0">
