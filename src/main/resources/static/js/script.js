@@ -143,8 +143,11 @@ function showProductModal(product) {
 function closeModal() {
   const modal = document.getElementById('productModal');
   modal.style.display = 'none';
-  document.body.style.overflow = ''; // Restore scroll
+  const modal2 = document.getElementById('cartPopup');
+  modal2.style.display = 'none';
+  document.body.style.overflow = ''; 
 }
+
 
 // Add modal close handlers (delegate + null-safe)
 document.addEventListener('click', function (e) {
