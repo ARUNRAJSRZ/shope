@@ -17,7 +17,17 @@ function addToCart(product) {
     })
     .then(() => {
       // Redirect to cart page after successful add
-      window.location.href = '/home';
+     const popup = document.getElementById('cartPopup');
+    popup.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+  document.getElementById('cartBtn').onclick = () => {
+    window.location.href = '/cart';
+  };
+
+  document.getElementById('homeBtn').onclick = () => {
+    window.location.href = '/home';
+  }
     })
     .catch(() => {
       alert('You must be logged in to add to cart.');

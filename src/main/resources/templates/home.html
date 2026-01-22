@@ -78,7 +78,19 @@
       <div id="empty" class="empty" style="display:none">No products match your search.</div>
       <nav id="pagination" class="pagination" aria-label="Pagination" style="display:none"></nav>
     </main>
+    <!-- conformation pop up -->
+    <div id="cartPopup" class="modal" role="dialog" aria-labelledby="modalTitle" style="display:none"> 
+      <div class="modal-content"style="width:25%" >
+        <button class="modal-close" aria-label="Close">&times;</button>
+        <h2>✅ Added to Cart</h2>
+        <p>Your item has been added successfully.</p>
 
+        <div class="popup-buttons">
+          <button id="cartBtn" class="btn primary">Go to Cart</button>
+          <button id="homeBtn" class="btn secondary">Continue Shopping</button>
+        </div>
+      </div>
+    </div>
     <!-- Product Details Modal -->
     <div id="productModal" class="modal" role="dialog" aria-labelledby="modalTitle" style="display:none">
       <div class="modal-content">
