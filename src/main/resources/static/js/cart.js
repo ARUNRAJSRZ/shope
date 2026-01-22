@@ -17,7 +17,7 @@ function addToCart(product) {
     })
     .then(() => {
       // Redirect to cart page after successful add
-      window.location.href = '/cart';
+      window.location.href = '/home';
     })
     .catch(() => {
       alert('You must be logged in to add to cart.');

@@ -80,6 +80,30 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
+    public ShippingAdress getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(ShippingAdress shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public UserAccount getUser() {
+        return user;
+    }
+
+    public void setUser(UserAccount user) {
+        this.user = user;
+    }
+
 }
 
 
