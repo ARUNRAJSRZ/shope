@@ -127,7 +127,7 @@ function showProductModal(product) {
     if (window.addToCart) {
       window.addToCart(product);
      // alert('Added to cart!');
-     //closeModal();
+      closeModal();
     }
   };
   buyBtn.onclick = () => {
